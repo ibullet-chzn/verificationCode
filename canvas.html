@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+
+<style>
+  #tutorial {
+    border: 1px solid #FFF;
+  }
+</style>
+
+<body>
+
+<canvas id="tutorial" width="200" height="50">
+  I'm sorry! Your browser does not support canvas!
+</canvas>
+
+<script>
+  var canvas = document.getElementById('tutorial');
+  var canvasWidth = canvas.clientWidth;
+  var canvasHeight = canvas.clientHeight;
+  if (canvas.getContext) {
+    var ctx = canvas.getContext('2d');
+    var verificationCode = ClassVerificationCode();
+    // background
+    // create Pixel data
+    for (var i = 0; i < canvasWidth; i++) {
+      for (var j = 0; j < canvasHeight; j++) {
+        var randomColor = verificationCode.getRandomColor();
+        ctx.fillStyle = 'rgba(' + randomColor['r'] + ',' + randomColor['g'] + ',' + randomColor['b'] + ',' + randomColor['a'] + ')';
+        ctx.fillRect(i, j, 1, 1);
+      }
+    }
+    // create random font
+    for (var k = 0; k < 4; k++) {
+      ctx.save();
+      var randomWord = verificationCode.getRandomWord();
+      ctx.font = "46px serif";
+      ctx.fillStyle = randomWord.color;
+      ctx.textBaseline = "middle";
+      ctx.translate(10 + (30 * (k + 1)), 25);
+      ctx.rotate(randomWord.rotate());
+      ctx.fillText(randomWord.text, 0, 0);
+      ctx.restore();
+    }
+  } else {
+    // canvas-unsupported code here
+  }
+
+  function ClassVerificationCode(transparency) {
+    var referenceColor = {
+      r: Math.floor(Math.random() * 255),
+      g: Math.floor(Math.random() * 255),
+      b: Math.floor(Math.random() * 255),
+      a: transparency ? parseFloat(Math.random().toFixed(1)) : 1
+    };
+    var words = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return {
+      getRandomColor: function () {
+        return {
+          r: referenceColor['r'] + Math.floor(Math.random() * 100) - 50,
+          g: referenceColor['g'] + Math.floor(Math.random() * 100) - 50,
+          b: referenceColor['b'] + Math.floor(Math.random() * 100) - 50,
+          a: referenceColor['a']
+        };
+      },
+      getRandomWord: function () {
+        return {
+          text: words[Math.floor(Math.random() * 36)],
+          color: 'rgba(' + ((255 - referenceColor['r']) + Math.floor(Math.random() * 100) - 50) + ',' +
+          ((255 - referenceColor['g']) + Math.floor(Math.random() * 100) - 50) + ',' +
+          ((255 - referenceColor['b']) + Math.floor(Math.random() * 100) - 50) + ',' +
+          referenceColor['a'] + ')',
+          rotate: function () {
+            if (Math.random() >= 0.5) {
+              return Math.PI / (Math.floor(Math.random() * 30) + 6)
+            }
+            return -(Math.PI / (Math.floor(Math.random() * 30) + 6))
+          }
+        };
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
